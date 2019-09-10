@@ -2,11 +2,26 @@
 
 if [ "$1" = "--docker_build" ]
 then
-	docker build --tag=madnklo/madnklo_dev ./docker_src
+	docker build --tag=madnklo/madnklo_dev:build ./docker_src/madnklo_build
 	echo ""
-	echo "================================================================"
-	echo "   New image built. Consider pruning/removing dangling images"
-	echo "================================================================"	
+	echo "====================================================================="
+	echo "   New base image built. Consider pruning/removing dangling images"
+	echo "====================================================================="	
+	docker build --no-cache --tag=madnklo/madnklo_dev:git-update ./docker_src/madnklo
+	echo ""
+	echo "============================================================================="
+	echo "   New git-tracking image built. Consider pruning/removing dangling images"
+	echo "============================================================================="	
+	exit
+fi
+
+if [ "$1" = "--docker_repackage" ]
+then	
+	docker build --no-cache --tag=madnklo/madnklo_dev:git-update ./docker_src/madnklo
+	echo ""
+	echo "============================================================================="
+	echo "   New git-tracking image built. Consider pruning/removing dangling images"
+	echo "============================================================================="	
 	exit
 fi
 
@@ -19,10 +34,10 @@ fi
 if [ "$1" = "--initialize" ]
 then
 	echo "Running the initialization script"
-	docker run --rm\
+	docker run --rm \
 	--entrypoint=/home/hep/initialize.sh \
-	-v $(pwd)/madnklo_src:/home/hep/madnklo\
-	madnklo/madnklo_dev
+	-v $(pwd)/madnklo_src:/home/hep/madnklo \
+	madnklo/madnklo_dev:git-update
 	echo "Pulling the latest version for the repo"
 	cd $(pwd)/madnklo_src
 	git pull
@@ -37,7 +52,7 @@ then
 	-v $(pwd)/madnklo_src:/home/hep/madnklo \
 	-v $(pwd)/madnklo_persistent:/var/madnklo_persistent \
 	--entrypoint=bash \
-	madnklo/madnklo_dev
+	madnklo/madnklo_dev:git-update
 	exit
 fi
 
@@ -63,7 +78,7 @@ if [ -f "madnklo_src/bin/mg5_aMC" ]; then
 	docker run -it --rm \
 	-v $(pwd)/madnklo_src:/home/hep/madnklo \
 	-v $(pwd)/madnklo_persistent:/var/madnklo_persistent \
-	madnklo/madnklo_dev $1
+	madnklo/madnklo_dev:git-update $1
 else
 	echo "Local MadNkLO source madnklo_src folder could not be found."
 	echo "Make sure that you have properly initialized the environment by running the command 'madnklo_docker.sh --initialize'"
