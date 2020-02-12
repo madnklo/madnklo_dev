@@ -4,7 +4,8 @@ USER root
 
 WORKDIR /home/hep
 
-RUN apt-get -y update ; apt-get -y install \
+RUN apt-get -y update 
+RUN apt-get -y install \
 	git \
 	wget \
 	ca-certificates \
@@ -20,7 +21,7 @@ RUN apt-get -y update ; apt-get -y install \
 	dvipng ;\
 apt-get autoremove ; apt-get clean
 
-RUN pip install numpy ; pip install bidict vegas mpmath pyjet matplotlib pymultinest
+RUN pip install numpy ; pip install bidict vegas mpmath pyjet matplotlib pymultinest ipdb
 
 RUN git clone -b master https://github.com/madnklo/madnklo.git code_origin
 
