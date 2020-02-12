@@ -78,6 +78,7 @@ if [ -f "madnklo_src/bin/mg5_aMC" ]; then
 	docker run -it --rm \
 	-v $(pwd)/madnklo_src:/home/hep/madnklo \
 	-v $(pwd)/madnklo_persistent:/var/madnklo_persistent \
+        -e "HOME=/var/madnklo_persistent" \
 	madnklo/madnklo_dev:git-update $1
 else
 	echo "Local MadNkLO source madnklo_src folder could not be found."
